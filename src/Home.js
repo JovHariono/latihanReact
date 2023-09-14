@@ -1,27 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import BlogList from "./blogList";
+import axios from "axios";
 
 const Home = () => {
-  const [blogs, setBlogs] = useState([
-    { title: "My new website", body: "lorem ipsum...", author: "mario", id: 1 },
-    { title: "Welcome party!", body: "lorem ipsum...", author: "yoshi", id: 2 },
-    {
-      title: "Web dev top tips",
-      body: "lorem ipsum...",
-      author: "mario",
-      id: 3,
-    },
-  ]);
+  const [blogs, setBlogs] = useState([]);
+  const [isPending, setIsPending] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/blogs1", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setBlogs(res.data);
+        setIsPending(false);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div className="home">
-      {blogs.map((blog, index) => {
-        return (
-          <div className="blog-preview" key={index}>
-            <h2> {blog.title} </h2>
-            <p> Written by {blog.author} </p>
-          </div>
-        );
-      })}
+      { isPending && <div>Loading...</div> }
+      { blogs && <BlogList blogs={blogs} title="All Blogs!" />}
     </div>
   );
 };
