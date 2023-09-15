@@ -1,27 +1,14 @@
 import { useState, useEffect } from "react";
 import BlogList from "./blogList";
-import axios from "axios";
+import useFetch from "./useFetch";
 
 const Home = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [isPending, setIsPending] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/blogs1", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setBlogs(res.data);
-        setIsPending(false);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  const { data, isPending } = useFetch("http://localhost:8000/blogs")
 
   return (
     <div className="home">
       { isPending && <div>Loading...</div> }
-      { blogs && <BlogList blogs={blogs} title="All Blogs!" />}
+      { data && <BlogList blogs={data} title="All Blogs!" />}
     </div>
   );
 };
